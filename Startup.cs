@@ -28,7 +28,7 @@ namespace PruebaFederacion
         {
             services.BindConfig<Saml2Configuration>(Configuration, "Saml2", (serviceProvider, saml2Configuration) =>
             {
-                saml2Configuration.SigningCertificate = CertificateUtil.Load(AppEnvironment.MapToPhysicalFilePath(Configuration["Saml2:SigningCertificateFile"]));               
+                //saml2Configuration.SigningCertificate = CertificateUtil.Load(AppEnvironment.MapToPhysicalFilePath(Configuration["Saml2:SigningCertificateFile"]));               
 
                 saml2Configuration.AllowedAudienceUris.Add(saml2Configuration.Issuer);
                 
@@ -37,30 +37,12 @@ namespace PruebaFederacion
                 
                 entityDescriptor.ReadIdPSsoDescriptorFromUrlAsync(httpClientFactory, new Uri(Configuration["Saml2:IdPMetadata"])).GetAwaiter().GetResult();
                 if (entityDescriptor.IdPSsoDescriptor != null)
-                {                    
+                {
                     saml2Configuration.AllowedIssuer = entityDescriptor.EntityId;
                     saml2Configuration.SingleSignOnDestination = entityDescriptor.IdPSsoDescriptor.SingleSignOnServices.First().Location;
                     saml2Configuration.SingleLogoutDestination = entityDescriptor.IdPSsoDescriptor.SingleLogoutServices.First().Location;
-                                        
-                    foreach (var signingCertificate in entityDescriptor.IdPSsoDescriptor.SigningCertificates)
-                    {
-                        if (signingCertificate.IsValidLocalTime())
-                        {
-                            saml2Configuration.SignatureValidationCertificates.Add(signingCertificate);
-                        }
-                //        signingCertificate.EncryptionCertificates = new X509Certificate2[]
-                //{
-                //    saml2Configuration.DecryptionCertificate
-                //};
-                    }
-                    if (saml2Configuration.SignatureValidationCertificates.Count <= 0)
-                    {
-                        throw new Exception("The IdP signing certificates has expired.");
-                    }
-                    if (entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.HasValue)
-                    {
-                        saml2Configuration.SignAuthnRequest = entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.Value;
-                    }
+
+                    saml2Configuration.SignatureValidationCertificates.AddRange(entityDescriptor.IdPSsoDescriptor.SigningCertificates);
                 }
                 else
                 {
