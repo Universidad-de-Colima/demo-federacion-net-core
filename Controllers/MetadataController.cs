@@ -4,8 +4,6 @@ using ITfoxtec.Identity.Saml2.Schemas;
 using ITfoxtec.Identity.Saml2.Schemas.Metadata;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
 namespace PruebaFederacion.Controllers
@@ -21,12 +19,15 @@ namespace PruebaFederacion.Controllers
             this.config = config;
         }
 
+    
         public IActionResult Index()
         {
             var defaultSite = new Uri($"{Request.Scheme}://{Request.Host.ToUriComponent()}/");
 
             var entityDescriptor = new EntityDescriptor(config);
             entityDescriptor.ValidUntil = 365;
+                        
+
             entityDescriptor.SPSsoDescriptor = new SPSsoDescriptor
             {
                 WantAssertionsSigned = true,
@@ -34,10 +35,10 @@ namespace PruebaFederacion.Controllers
                 {
                     config.SigningCertificate
                 },
-                //EncryptionCertificates = new X509Certificate2[]
-                //{
-                //    config.DecryptionCertificate
-                //},
+                
+
+                EncryptionCertificates = config.DecryptionCertificates,
+
                 SingleLogoutServices = new SingleLogoutService[]
                 {
                     new SingleLogoutService { Binding = ProtocolBindings.HttpPost, Location = new Uri(defaultSite, "Auth/SingleLogout"), ResponseLocation = new Uri(defaultSite, "Auth/LoggedOut") }
@@ -49,7 +50,7 @@ namespace PruebaFederacion.Controllers
                 },
                 AttributeConsumingServices = new AttributeConsumingService[]
                 {
-                    new AttributeConsumingService { ServiceName = new ServiceName("Sistema", "en"), RequestedAttributes = CreateRequestedAttributes() }
+                    //new AttributeConsumingService { ServiceNames.add = new ServiceNames("Sistema", "en"), RequestedAttributes = CreateRequestedAttributes() }
                 },
             };
             entityDescriptor.ContactPersons = new[] {
@@ -66,13 +67,16 @@ namespace PruebaFederacion.Controllers
                 .ToActionResult();
         }
 
+
+
         private IEnumerable<RequestedAttribute> CreateRequestedAttributes()
         {
-           
+
             yield return new RequestedAttribute("urn:oid:2.5.4.4");
             yield return new RequestedAttribute("urn:oid:2.5.4.3", false);
             yield return new RequestedAttribute("urn:xxx", "Prueba-Federacion");
             yield return new RequestedAttribute("urn:yyy", "123") { AttributeValueType = "xs:integer" };
         }
+    
     }
 }

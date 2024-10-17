@@ -32,15 +32,18 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.123" />
-    <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.8.4" />
-    <PackageReference Include="ITfoxtec.Identity.Saml2.Mvc" Version="4.8.4" />
-    <PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.8.4" />
+    <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.13.2" />
+    <PackageReference Include="ITfoxtec.Identity.Saml2.Mvc" Version="4.13.2" />
+    <PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.13.2" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Certificado\localhost.pfx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Certificado\localhost1234.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
