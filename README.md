@@ -8,8 +8,10 @@ https://www.itfoxtec.com/identitysaml2
 
 ## Implementación
 ### Generación de certificado .pfx
-se generó un certificado sin contraseña
+se generó un certificado con contraseña para tener la respuesta del IDP encriptada
 https://www.foxids.com/tools/Certificate 
+
+
 
 ### Configuración
 1.-Modificar informacion del appsettings.json 
